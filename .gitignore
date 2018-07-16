@@ -66,3 +66,4 @@ bin/
 pip-selfcheck.json
 
 .idea/*
+.python-version

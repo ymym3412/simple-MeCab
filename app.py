@@ -6,17 +6,19 @@ import argparse
 
 app = Flask(__name__)
 # 返すJSONの中で日本語が文字化けしないための対策
-app.config['JSON_AS_ASCII'] = False
+app.config["JSON_AS_ASCII"] = False
+app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
 
 
 @app.route("/")
 def hello():
     return "hello"
 
+
 @app.route("/parse")
 def parse():
     response = None
-    sentence = request.args.get("sentence", "").encode("utf-8")
+    sentence = request.args.get("sentence", "")
     # dic指定は実装予定
     # dic = request.args,get("dic", "")
     if sentence is None:
@@ -26,12 +28,11 @@ def parse():
                                 "url": "/parse"}})
         response.status_code = 400
         return response
-    print sentence
     m = MeCab.Tagger(" -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
-    mrphs = m.parse(sentence.decode("utf-8").encode("utf-8")).split("\n")
+    mrphs = m.parse(sentence).split("\n")
     mrph_list = []
     for i, mrph in enumerate(mrphs):
-        if mrph == u"EOS" or mrph == u"":
+        if mrph == "EOS" or mrph == "":
             continue
         morph = {}
         surface, feature = mrph.split("\t")[0], mrph.split("\t")[1]
@@ -68,4 +69,3 @@ def parse_options():
 if __name__ == "__main__":
     args = parse_options()
     app.run(host=args.host, port=args.port)
-    # app.run()
