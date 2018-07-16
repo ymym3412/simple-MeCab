@@ -1,0 +1,7 @@
+mecab-api: 
+  build: .
+  volumes: 
+    - ".:/opt/api"
+  ports: 
+    - "5000:80"
+  restart: always
